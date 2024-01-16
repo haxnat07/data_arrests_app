@@ -30,7 +30,36 @@ from datetime import timedelta
 
 from django.utils import timezone
 
+from django.http import JsonResponse
+from django.db.models.functions import TruncMonth
+from django.db.models import Count
 
+import json
+from django.db.models.functions import TruncDay
+
+
+# graph
+def arrest_records_by_date(request):
+    current_date = datetime.date.today()
+    start_of_month = current_date.replace(day=1)
+    end_of_month = datetime.date(current_date.year, current_date.month + 1, 1) if current_date.month < 12 else datetime.date(current_date.year + 1, 1, 1)
+
+    records = ArrestRecord.objects.filter(
+        arrest_date__range=(start_of_month, end_of_month)
+    ).annotate(
+        day=TruncDay('arrest_date')
+    ).values('day').annotate(count=Count('id')).order_by('day')
+
+    formatted_records = [{'day': record['day'].strftime("%Y-%m-%d"), 'count': record['count']} for record in records]
+
+    context = {
+        'records_json': json.dumps(formatted_records)
+    }
+
+    return render(request, 'accounts/stats.html', context)
+
+
+# dashboard
 @login_required
 def dashboard(request):
     time_filter = request.GET.get('time_filter', '24 hours')
@@ -175,7 +204,6 @@ def get_report():
                 print(f"Error saving record: {e}")
 
 
-
 def run_script(request):
     get_report()
 
@@ -190,8 +218,9 @@ def search_script(request):
     # Use Firefox options and driver instead of Chrome
     firefox_options = webdriver.FirefoxOptions()
     # firefox_options.add_argument("--incognito")
-    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
-
+    # Set headless mode
+    firefox_options.add_argument("--headless")
+    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
 
     for record in ArrestRecord.objects.all():
         print(record.name)
@@ -221,7 +250,7 @@ def search_script(request):
         submit_button.click()
         
         try:
-            wait = WebDriverWait(driver, 150)
+            wait = WebDriverWait(driver, 50)
             results_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "caseLink")))
             
             if "CR01-24-00" in results_element.text:
@@ -248,4 +277,5 @@ def search_script(request):
             continue
 
     driver.quit()
+    return redirect('dashboard')
 

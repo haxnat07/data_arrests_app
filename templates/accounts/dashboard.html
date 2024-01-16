@@ -20,7 +20,7 @@
                 </div>
                 <div class="dashboard-sidebar-menu-sub">
                     <img src="{% static 'Images/favicon.ico' %}" alt="howard">
-                    <h4>Profile</h4>
+                    <h4><a href="{% url 'stats' %}" >Stats</a></h4>
                 </div>
             </div>
             <div>
@@ -67,7 +67,7 @@
         <div class="change-period-div">
             <p>Change Period</p>
             <form method="get" action="">
-                <select name="time_filter" onchange="this.form.submit()">
+                <select class="change-period-div-select" name="time_filter" onchange="this.form.submit()">
                     <option value="24 hours" {% if time_filter == '24 hours' %}selected{% endif %}>24 hours</option>
                     <option value="7 days" {% if time_filter == '7 days' %}selected{% endif %}>7 days</option>
                     <option value="Month" {% if time_filter == 'Month' %}selected{% endif %}>Month</option>
@@ -131,4 +131,7 @@
         </div>
     </div>
 </div>
+<script>
+    console.log("working")
+</script>
 {% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-sidebar">
+        <div>
+            <div class="dashboard-logo-div"><img src="" alt="Logo" /></div>
+            <div class="dashboard-sidebar-name-img">
+                <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
+                <div>
+                    <h3>Esther Howard</h3>
+                    <p>{{ request.user.email }}</p>
+                </div>
+            </div>
+            <div class="dashboard-sidebar-menu">
+                <div class="dashboard-sidebar-menu-sub">
+                    <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
+                    <h4><a href="{% url 'dashboard' %}" >Dashboard</a></h4>
+                </div>
+                <div class="dashboard-sidebar-menu-sub">
+                    <img src="{% static 'Images/favicon.ico' %}" alt="howard">
+                    <h4>Profile</h4>
+                </div>
+            </div>
+            <div>
+                <div class="dashboard-sidebar-menu-sub">
+                    <img src="{% static 'Images/favicon.ico' %}" alt="howard">
+                    <h4>Settings</h4>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="dashboard-sidebar-menu-sub">
+                <img src="{% static 'Images/favicon.ico' %}" alt="howard">
+                <h4><a href="{% url 'logout' %}" >Log Out</a></h4>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-content">
+        <!-- Search Row -->
+        <div class="dashboard-content-search-bar">
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search Case">
+            </div>
+            <img src="{% static 'Images/favicon.ico' %}" alt="notification">
+        </div>
+        <!-- Save Search Button Row-->
+        <div class="dashboard-content-search-btns">
+            <div class="search-btns-first">
+                <select>
+                    <option value="arrests">Arrests</option>
+                </select>
+                <a href="" class="search-btns-first-link">List</a>
+                <a href="" class="search-btns-first-schedule">Schedule</a>
+            </div>
+            <div class="search-btns-second">
+                <p>Found <span class="cases-color-text">{{ total_records }} cases</span></p>
+                <a href="{% url 'run_script' %}" class="save-search-link">
+                <button class="save-search-btn">Run Arrests</button></a>
+                <a href="{% url 'search_script' %}" class="save-search-link">
+                <button class="save-search-btn">Run Lawyers</button></a>
+            </div>
+        </div>
+        <!-- Change period row -->
+        <div class="change-period-div">
+            <p>Change Period</p>
+            <select class="change-period-div-select-stats" id="dateSelect" onchange="updateGraph()">
+                <option value="2023-12">December 2023</option>
+        <option value="2024-01" selected>January 2024</option>
+            </select>            
+        </div>
+        <!-- Main Table -->
+        <div class="main-table">
+            <canvas id="arrestChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    const recordsData = JSON.parse('{{ records_json|safe }}');
+
+    const ctx = document.getElementById('arrestChart').getContext('2d');
+    const arrestChart = new Chart(ctx, {
+        type: 'line',  // Changed from 'bar' to 'line'
+        data: {
+            labels: recordsData.map(item => item.day),
+            datasets: [{
+                label: 'Number of Arrests',
+                data: recordsData.map(item => item.count),
+                backgroundColor: 'rgba(0, 123, 255, 0.2)',  // Adjust the style if needed
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 2,
+                fill: false  // Set to false for no fill under the line
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+    
+{% endblock %}

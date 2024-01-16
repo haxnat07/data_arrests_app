@@ -157,9 +157,18 @@ body {
     padding-right: 10px;
 }
 
-.change-period-div > select {
+.change-period-div-select {
     height: 35px;
     width: 80px;
+    background-color: #fff;
+    border: 1px solid #fff;
+    color: #004AD9;
+    border-radius: 4px;
+}
+
+.change-period-div-select-stats {
+    height: 35px;
+    width: 114px;
     background-color: #fff;
     border: 1px solid #fff;
     color: #004AD9;
