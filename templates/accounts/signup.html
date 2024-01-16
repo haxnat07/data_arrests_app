@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="container">
+      <div class="signup-main-div">
+
+          <h2>Create an Account</h2>
+
+          <div class="signup-main-row">
+              <div class="signup-box">
+                  <div class="signup-div">
+                      <div class="signup-input-field">
+                          <label>Name*</label>
+                          <input type="text" name="{{ form.name.name }}" placeholder="Enter your name" />
+                          <label>Email*</label>
+                          <input type="email" name="{{ form.email.name }}" placeholder="Enter your email" />
+                      </div>
+                      <div class="signup-input-field">
+                          <label>Password*</label>
+                          <input type="password" name="{{ form.password.name }}" placeholder="Create a password" />
+                      </div>
+                      <div class="signup-btn-field mobile-hide">
+                          <button type="submit" class="signup-btn">Log In</button>
+                          <p class="already-account-text">Already have an account? <a href="{% url 'login' %}"
+                                  class="already-login">Log In</a></p>
+                      </div>
+                  </div>
+              </div>
+              <div class="signup-box">
+                  <div class="signup-div">
+                      <div class="signup-input-field">
+                          <label>Name of Your Law Firm*</label>
+                          <input type="text" name="{{ form.law_firm.name }}" placeholder="Enter your name of law firm" />
+                          <label>What is your preferred arrest location*</label>
+                          <input type="text" name="{{ form.preferred_arrest_location.name }}" placeholder="Select your preferred arrest location" />
+                      </div>
+                      <div class="signup-input-field">
+                          <label>Your City*</label>
+                          <input type="text" name="{{ form.city.name }}" placeholder="Select your city" />
+                      </div>
+                      <div class="signup-btn-field">
+                          <p class="already-account-text desktop-hide">Already have an account? <a href="{% url 'login' %}"
+                              class="already-login">Log In</a></p>
+                          <button type="submit" class="signup-btn desktop-hide">Log In</button>
+                        </form>
+                          <button class="google-btn"><a href="{% url 'social:begin' 'google-oauth2' %}">
+                            Login with Google</a></button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="login-container">
+      <div class="login-box">
+          <div class="login-div">
+              <h2>Log In</h2>
+              <p>Welcome Back! Log In to your account below.</p>
+              <div class="login-input-field">
+                  <label>Email*</label>
+                  <input type="text" name="{{ form.email.name }}" placeholder="Enter your email" />
+              </div>
+              <div class="login-input-field">
+                  <div class="login-password-label">
+                      <label>Password*</label>
+                      <label>Forgot Password?</label>
+                  </div>
+                  <input type="password" name="{{ form.password.name }}" placeholder="Create a password" />
+              </div>
+              <div class="login-btn-field">
+                  <button type="submit" class="login-btn">Log In</button>
+                </form>
+                  <button class="google-btn"><a href="{% url 'social:begin' 'google-oauth2' %}">
+                    Login with Google</a></button>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+{% endblock %}
