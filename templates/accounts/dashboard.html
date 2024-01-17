@@ -3,11 +3,44 @@
 
 {% block content %}
 <div class="dashboard-container">
+    
+    <div class="mobile-nav">
+        <a href="{% url 'dashboard' %}" >
+            <img src="" alt="Logo" />
+            </a>
+        <i class="fas fa-bars" id="openSidebar"></i>
+    </div>
+    <div id="mySidebar" class="sidebar">    
+        <a href="javascript:void(0)" id="closeSidebar" class="closebtn">&times;</a>
+        <div class="dashboard-sidebar-name-img">
+            <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
+            <div>
+                <h3>{% if request.user.name %}{{ request.user.name }}{% endif %}</h3>
+                <p>{{ request.user.email }}</p>
+            </div>
+        </div>
+        <div class="dashboard-sidebar-menu">
+            <div class="dashboard-sidebar-menu-sub">
+                <i class="fa fa-chart-bar"></i>
+                <h4 class="menu-hd"><a href="{% url 'stats' %}" >Stats</a></h4>
+            </div>
+        </div>
+        <div>
+            <div class="dashboard-sidebar-menu-sub">
+                <i class="fa fa-sign-out-alt"></i>
+                <h4 class="menu-hd"><a href="{% url 'logout' %}" >Log Out</a></h4>
+            </div>
+        </div>
+</div>
     <div class="dashboard-sidebar">
         <div>
-            <div class="dashboard-logo-div"><img src="" alt="Logo" /></div>
+            <div class="dashboard-logo-div">
+                <a href="{% url 'dashboard' %}" >
+                <img src="" alt="Logo" />
+                </a>
+            </div>
             <div class="dashboard-sidebar-name-img">
-                <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
+                <img src="{% static 'Images/favicon.ico' %}" alt="" />
                 <div>
                     <h3>{% if request.user.name %}{{ request.user.name }}{% endif %}</h3>
                     <p>{{ request.user.email }}</p>
@@ -73,7 +106,7 @@
             </form>
         </div>
         <!-- Main Table -->
-        <div class="main-table">
+        <div class="main-table" style="overflow-x:auto;">
             <table>
                 <tr>
                     <th>Name</th>
@@ -95,9 +128,9 @@
                     <td class="custom-td">{{ record.charge }}</td>
                     <td class="custom-td">{{ record.arrest_type }}</td>
                     {% if record.state_lawyer %}
-                    <td class="custom-td-btn"><button class="table-hired-btn">Kristin Watson</button></td>
-                    {% elif record.defendant_lawyer%}
-                    <td class="custom-td-btn"><button class="table-hired-btn">Kristin Watson</button></td>
+                    <td class="custom-td-btn"><button class="table-hired-btn">{{ record.state_lawyer}}</button></td>
+                    {% elif record.defendant_lawyer %}
+                    <td class="custom-td-btn"><button class="table-hired-btn">{{ record.defendant_lawyer }}</button></td>
                     {% else %}
                     <td class="custom-td-btn"><button class="table-not-hired-btn">Not Hired</button></td>
                     {% endif %}
@@ -131,6 +164,18 @@
     </div>
 </div>
 <script>
-    console.log("working")
+    $(document).ready(function() {
+        // Delegate event for opening the sidebar
+        $(document).on('click', '#openSidebar', function() {
+            $('#mySidebar').css('right', '0');
+            $('#mySidebar').css('padding-left', '30px');
+        });
+    
+        // Event for closing the sidebar
+        $('#closeSidebar').click(function() {
+            $('#mySidebar').css('right', '-350px');
+        });
+    });
+    
 </script>
 {% endblock %}

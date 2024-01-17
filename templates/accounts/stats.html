@@ -3,9 +3,42 @@
 
 {% block content %}
 <div class="dashboard-container">
+    <div class="mobile-nav">
+        <a href="{% url 'stats' %}" >
+            <img src="" alt="Logo" />
+            </a>
+        <i class="fas fa-bars" id="openSidebar"></i>
+    </div>
+    <div id="mySidebar" class="sidebar">    
+        <a href="javascript:void(0)" id="closeSidebar" class="closebtn">&times;</a>
+        
+        <div class="dashboard-sidebar-name-img">
+            <img src="{% static '' %}" alt="howard" />
+            <div>
+                <h3>{% if request.user.name %}{{ request.user.name }}{% endif %}</h3>
+                <p>{{ request.user.email }}</p>
+            </div>
+        </div>
+        <div class="dashboard-sidebar-menu">
+            <div class="dashboard-sidebar-menu-sub">
+                <i class="fa fa-tachometer-alt"></i>
+                <h4 class="menu-hd"><a href="{% url 'dashboard' %}" >Dashboard</a></h4>
+            </div>
+        </div>
+        <div>
+            <div class="dashboard-sidebar-menu-sub">
+                <i class="fa fa-sign-out-alt"></i>
+                <h4 class="menu-hd"><a href="{% url 'logout' %}" >Log Out</a></h4>
+            </div>
+        </div>
+</div>
     <div class="dashboard-sidebar">
         <div>
-            <div class="dashboard-logo-div"><img src="" alt="Logo" /></div>
+            <div class="dashboard-logo-div">
+                <a href="{% url 'stats' %}" >
+                    <img src="" alt="Logo" />
+                    </a>
+            </div>
             <div class="dashboard-sidebar-name-img">
                 <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
                 <div>
@@ -129,6 +162,19 @@ document.getElementById('selectMonth').value = '{{ selected_month }}';
 
 
 </script>
-
+<script>
+    $(document).ready(function() {
+        // Delegate event for opening the sidebar
+        $(document).on('click', '#openSidebar', function() {
+            $('#mySidebar').css('right', '0');
+            $('#mySidebar').css('padding-left', '30px');
+        });
     
+        // Event for closing the sidebar
+        $('#closeSidebar').click(function() {
+            $('#mySidebar').css('right', '-350px');
+        });
+    });
+    
+</script>
 {% endblock %}

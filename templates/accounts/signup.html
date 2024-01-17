@@ -41,12 +41,12 @@
                           <input type="text" name="{{ form.city.name }}" placeholder="Select your city" />
                       </div>
                       <div class="signup-btn-field">
-                          <p class="already-account-text desktop-hide">Already have an account? <a href="{% url 'login' %}"
-                              class="already-login">Log In</a></p>
                           <button type="submit" class="signup-btn desktop-hide">Sign Up</button>
                         </form>
                           <button class="google-btn"><a href="{% url 'social:begin' 'google-oauth2' %}">
                             Login with Google</a></button>
+                            <p class="already-account-text desktop-hide">Already have an account? <a href="{% url 'login' %}"
+                                class="already-login">Log In</a></p>
                       </div>
                   </div>
               </div>

@@ -168,6 +168,13 @@ body {
     }
 }
 
+@media (min-width: 390px) and (max-width: 769) {
+    .signup-main-div {
+        justify-content: end !important;
+    }
+}
+
+
 @media screen and (max-width: 425px) {
     .google-btn {
         background-position: left 30px center;
