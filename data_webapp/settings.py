@@ -156,7 +156,6 @@ EMAIL_HOST_PASSWORD = 'qnoxgjwwhbsbrfzg'
 # social auth
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.facebook.FacebookOAuth2',
     
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -175,12 +174,9 @@ SOCIAL_AUTH_PIPELINE = (
     #'core.social_pipeline.prevent_automatic_login', # custom pipeline function
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '104466642857-s9n7b9t0dcdf3p9kaac48348ul1af9f5.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '104466642857-8ptpc89310t0mo436t7t4b40fs51i5s3.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
-SOCIAL_AUTH_FACEBOOK_KEY = '899672064394701'
-SOCIAL_AUTH_FACEBOOK_SECRET = '1cb64c9f68f591235f672dc6d823dc6d'
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
 # custom user model
 AUTH_USER_MODEL = 'core.User'

@@ -20,8 +20,11 @@ class ArrestsDataConfig(AppConfig):
         from .views import run_script, search_script
 
         from apscheduler.schedulers.background import BackgroundScheduler
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(run_script, 'cron', hour=6, minute=28)
+        from pytz import timezone
+        from django.conf import settings
+
+        scheduler = BackgroundScheduler(timezone=timezone(settings.TIME_ZONE))
+        scheduler.add_job(run_script, 'cron', hour=21, minute=33)
 
         scheduler.add_job(search_script, 'cron', hour=5, minute=16)
 
