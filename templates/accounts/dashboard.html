@@ -9,42 +9,42 @@
             <div class="dashboard-sidebar-name-img">
                 <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
                 <div>
-                    <h3>Esther Howard</h3>
+                    <h3>{% if request.user.name %}{{ request.user.name }}{% endif %}</h3>
                     <p>{{ request.user.email }}</p>
                 </div>
             </div>
             <div class="dashboard-sidebar-menu">
                 <div class="dashboard-sidebar-menu-sub">
-                    <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
-                    <h4>Dashboard</h4>
+                    
                 </div>
                 <div class="dashboard-sidebar-menu-sub">
-                    <img src="{% static 'Images/favicon.ico' %}" alt="howard">
-                    <h4><a href="{% url 'stats' %}" >Stats</a></h4>
+                    <i class="fa fa-chart-bar"></i>
+                    <h4 class="menu-hd"><a href="{% url 'stats' %}" >Stats</a></h4>
                 </div>
             </div>
             <div>
                 <div class="dashboard-sidebar-menu-sub">
-                    <img src="{% static 'Images/favicon.ico' %}" alt="howard">
-                    <h4>Settings</h4>
+                   
                 </div>
             </div>
         </div>
         <div>
             <div class="dashboard-sidebar-menu-sub">
-                <img src="{% static 'Images/favicon.ico' %}" alt="howard">
-                <h4><a href="{% url 'logout' %}" >Log Out</a></h4>
+                <i class="fa fa-sign-out-alt"></i>
+                <h4 class="menu-hd"><a href="{% url 'logout' %}" >Log Out</a></h4>
             </div>
         </div>
     </div>
     <div class="dashboard-content">
         <!-- Search Row -->
         <div class="dashboard-content-search-bar">
+            <form method="post" action="{% url 'search_view' %}">
+                {% csrf_token %}
             <div class="search-input">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search Case">
+                <input type="text" placeholder="Search Case" name="name">
             </div>
-            <img src="{% static 'Images/favicon.ico' %}" alt="notification">
+        </form>
         </div>
         <!-- Save Search Button Row-->
         <div class="dashboard-content-search-btns">
@@ -57,10 +57,7 @@
             </div>
             <div class="search-btns-second">
                 <p>Found <span class="cases-color-text">{{ total_records }} cases</span></p>
-                <a href="{% url 'run_script' %}" class="save-search-link">
-                <button class="save-search-btn">Run Arrests</button></a>
-                <a href="{% url 'search_script' %}" class="save-search-link">
-                <button class="save-search-btn">Run Lawyers</button></a>
+                
             </div>
         </div>
         <!-- Change period row -->
@@ -117,10 +114,12 @@
                         <a href="?page=1&time_filter={{ time_filter }}">&laquo; first</a>
                         <a href="?page={{ records.previous_page_number }}&time_filter={{ time_filter }}">previous</a>
                     {% endif %}
-            
+
+                    {% if records.records.paginator.num_pages %}
                     <span class="current">
                         Page {{ records.number }} of {{ records.paginator.num_pages }}.
                     </span>
+                    {% endif %}
             
                     {% if records.has_next %}
                         <a href="?page={{ records.next_page_number }}&time_filter={{ time_filter }}">next</a>

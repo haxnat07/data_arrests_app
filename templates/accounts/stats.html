@@ -9,42 +9,42 @@
             <div class="dashboard-sidebar-name-img">
                 <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
                 <div>
-                    <h3>Esther Howard</h3>
+                    <h3>{% if request.user.name %}{{ request.user.name }}{% endif %}</h3>
                     <p>{{ request.user.email }}</p>
                 </div>
             </div>
             <div class="dashboard-sidebar-menu">
                 <div class="dashboard-sidebar-menu-sub">
-                    <img src="{% static 'Images/favicon.ico' %}" alt="howard" />
-                    <h4><a href="{% url 'dashboard' %}" >Dashboard</a></h4>
+                    <i class="fa fa-tachometer-alt"></i>
+                    <h4 class="menu-hd"><a href="{% url 'dashboard' %}" >Dashboard</a></h4>
                 </div>
                 <div class="dashboard-sidebar-menu-sub">
-                    <img src="{% static 'Images/favicon.ico' %}" alt="howard">
-                    <h4>Profile</h4>
+                    
                 </div>
             </div>
             <div>
                 <div class="dashboard-sidebar-menu-sub">
-                    <img src="{% static 'Images/favicon.ico' %}" alt="howard">
-                    <h4>Settings</h4>
+                    
                 </div>
             </div>
         </div>
         <div>
             <div class="dashboard-sidebar-menu-sub">
-                <img src="{% static 'Images/favicon.ico' %}" alt="howard">
-                <h4><a href="{% url 'logout' %}" >Log Out</a></h4>
+                <i class="fa fa-sign-out-alt"></i>
+                <h4 class="menu-hd"><a href="{% url 'logout' %}" >Log Out</a></h4>
             </div>
         </div>
     </div>
     <div class="dashboard-content">
         <!-- Search Row -->
         <div class="dashboard-content-search-bar">
+            <form method="post" action="{% url 'search_view' %}">
+                {% csrf_token %}
             <div class="search-input">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search Case">
+                <input type="text" placeholder="Search Case" name="name">
             </div>
-            <img src="{% static 'Images/favicon.ico' %}" alt="notification">
+        </form>
         </div>
         <!-- Save Search Button Row-->
         <div class="dashboard-content-search-btns">
@@ -57,18 +57,16 @@
             </div>
             <div class="search-btns-second">
                 <p>Found <span class="cases-color-text">{{ total_records }} cases</span></p>
-                <a href="{% url 'run_script' %}" class="save-search-link">
-                <button class="save-search-btn">Run Arrests</button></a>
-                <a href="{% url 'search_script' %}" class="save-search-link">
-                <button class="save-search-btn">Run Lawyers</button></a>
+                
             </div>
         </div>
         <!-- Change period row -->
         <div class="change-period-div">
             <p>Change Period</p>
-            <select class="change-period-div-select-stats" id="dateSelect" onchange="updateGraph()">
+            <select class="change-period-div-select-stats" id="selectMonth">
+                <option value="2023-11">November 2023</option>
                 <option value="2023-12">December 2023</option>
-        <option value="2024-01" selected>January 2024</option>
+                <option value="2024-01" selected>January 2024</option>
             </select>            
         </div>
         <!-- Main Table -->
@@ -80,29 +78,56 @@
 
 <script>
     const recordsData = JSON.parse('{{ records_json|safe }}');
+console.log('Initial recordsData:', recordsData);
 
-    const ctx = document.getElementById('arrestChart').getContext('2d');
-    const arrestChart = new Chart(ctx, {
-        type: 'line',  // Changed from 'bar' to 'line'
-        data: {
-            labels: recordsData.map(item => item.day),
-            datasets: [{
-                label: 'Number of Arrests',
-                data: recordsData.map(item => item.count),
-                backgroundColor: 'rgba(0, 123, 255, 0.2)',  // Adjust the style if needed
-                borderColor: 'rgba(0, 123, 255, 1)',
-                borderWidth: 2,
-                fill: false  // Set to false for no fill under the line
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+const ctx = document.getElementById('arrestChart').getContext('2d');
+const arrestChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: recordsData.map(item => item.day),
+        datasets: [{
+            label: 'Number of Arrests',
+            data: recordsData.map(item => item.count),
+            backgroundColor: 'rgba(0, 123, 255, 0.2)',
+            borderColor: 'rgba(0, 123, 255, 1)',
+            borderWidth: 2,
+            fill: false
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
             }
         }
-    });
+    }
+});
+
+document.getElementById('selectMonth').addEventListener('change', function() {
+    const selectedMonth = this.value;
+    console.log('Selected month:', selectedMonth);
+
+    // Make an asynchronous request to fetch data for the selected month
+    fetch(`/stats/${selectedMonth}/`, {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Received data from server:', data);
+
+            arrestChart.data.labels = data.records.map(item => item.day);
+            arrestChart.data.datasets[0].data = data.records.map(item => item.count);
+            arrestChart.update();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+});
+
+// Set the default selected value for the dropdown
+document.getElementById('selectMonth').value = '{{ selected_month }}';
+
+
 </script>
 
     

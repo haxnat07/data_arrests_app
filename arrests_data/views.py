@@ -18,6 +18,8 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 
+from django.conf import settings
+
 from twocaptcha import TwoCaptcha
 
 from django.shortcuts import render, redirect
@@ -37,26 +39,47 @@ from django.db.models import Count
 import json
 from django.db.models.functions import TruncDay
 
+from selenium.common.exceptions import TimeoutException
+
 
 # graph
-def arrest_records_by_date(request):
-    current_date = datetime.date.today()
-    start_of_month = current_date.replace(day=1)
-    end_of_month = datetime.date(current_date.year, current_date.month + 1, 1) if current_date.month < 12 else datetime.date(current_date.year + 1, 1, 1)
+def arrest_records_by_date(request, selected_month=None):
+    if selected_month is None:
+        # Default: Use the current month
+        current_date = datetime.date.today()
+        selected_month = current_date.strftime('%Y-%m')
+
+    start_of_month = datetime.datetime.strptime(selected_month, '%Y-%m').replace(day=1)
+    end_of_month = (
+        datetime.date(start_of_month.year, start_of_month.month + 1, 1)
+        if start_of_month.month < 12
+        else datetime.date(start_of_month.year + 1, 1, 1)
+    )
 
     records = ArrestRecord.objects.filter(
         arrest_date__range=(start_of_month, end_of_month)
-    ).annotate(
-        day=TruncDay('arrest_date')
-    ).values('day').annotate(count=Count('id')).order_by('day')
+    ).annotate(day=TruncDay('arrest_date')).values('day').annotate(count=Count('id')).order_by('day')
 
     formatted_records = [{'day': record['day'].strftime("%Y-%m-%d"), 'count': record['count']} for record in records]
 
+    if request.headers.get('accept') == 'application/json':
+        # return a JsonResponse
+        response_data = {'records': formatted_records, 'selected_month': selected_month}
+        print('JSON response:', response_data) 
+        return JsonResponse(response_data)
+    
+    records_list = ArrestRecord.objects.all()
+    total_records = records_list.count()
+
+    # If not, render the HTML template
     context = {
-        'records_json': json.dumps(formatted_records)
+        'records_json': json.dumps(formatted_records),
+        'selected_month': selected_month ,
+        'total_records': total_records 
     }
 
     return render(request, 'accounts/stats.html', context)
+
 
 
 # dashboard
@@ -89,6 +112,16 @@ def dashboard(request):
         })
 
 
+# search filter by name
+def search_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name', '')
+        records = ArrestRecord.objects.filter(name__icontains=name)
+        return render(request, 'accounts/dashboard.html', {'records': records})
+    return render(request, 'accounts/dashboard.html')
+
+
+# arrests scrapper
 def get_state():
     html=requests.get("https://apps.adacounty.id.gov/sheriff/reports/").text
     soup=BeautifulSoup(html,"html.parser")
@@ -184,36 +217,47 @@ def get_report():
                 message+="<tr><td>"+arrest_name+"</td><td>"+age+"</td><td>"+address+"</td><td>"+date+"</td><td>"+time+"</td><td>"+agency+"</td><td>"+severity+"</td><td>"+charge+"</td><td>"+statute+"</td><td>"+type+"</td></tr>\n"
                 arrest_details=[arrest_name,address,agency,severity,charge,statute,type,age,date,time]
                 arrest_names.append(arrest_name)
+                print(arrest_names)
                 #print(arrest_details)
 
-                record = ArrestRecord(
-                name=arrest_name,
-                address=address,
-                agency=agency,
-                severity=severity,
-                charge=charge,
-                statute=statute,
-                arrest_type=type,
-                age=age,
-                arrest_date = datetime.datetime.strptime(date_str, '%m/%d/%Y').date(),
-                arrest_time = datetime.datetime.strptime(time, '%I:%M %p').time()
-            )
-            try:
-                record.save()
-            except Exception as e:
-                print(f"Error saving record: {e}")
+                # Check if the record already exists
+                existing_record = ArrestRecord.objects.filter(
+                    name=arrest_name,
+                    address=address,
+                    charge=charge
+                ).first()
+
+                if not existing_record:
+                    record = ArrestRecord(
+                    name=arrest_name,
+                    address=address,
+                    agency=agency,
+                    severity=severity,
+                    charge=charge,
+                    statute=statute,
+                    arrest_type=type,
+                    age=age,
+                    arrest_date = datetime.datetime.strptime(date_str, '%m/%d/%Y').date(),
+                    arrest_time = datetime.datetime.strptime(time, '%I:%M %p').time()
+                )
+                try:
+                    record.save()
+                except Exception as e:
+                    print(f"Error saving record: {e}")
+            else:
+                print(f"Record already exists for {arrest_name}")
 
 
-def run_script(request):
+def run_script():
     get_report()
 
     return redirect('dashboard')
 
 
-from selenium.common.exceptions import TimeoutException
-def search_script(request):
+# lawyers scrapper
+def search_script():
 
-    solver = TwoCaptcha('3608f5e5012070ab8e5d1209dca111d6')
+    solver = TwoCaptcha(settings.TWOCAPTCHA_API_KEY)
 
     # Use Firefox options and driver instead of Chrome
     firefox_options = webdriver.FirefoxOptions()

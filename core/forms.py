@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from .models import User
 
 
@@ -10,6 +12,17 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'name', 'law_firm', 'preferred_arrest_location', 'city', 'password')
+
+    def clean_password(self):
+        # Validate the password
+        password = self.cleaned_data.get('password')
+        try:
+            validate_password(password, self.instance)
+        except ValidationError as e:
+            raise forms.ValidationError(e.messages)
+
+        return password
+
 
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)

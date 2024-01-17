@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-343g)k8^(j1imv=2ak3t7vl2+f2uj%1r7im&x^awrrh$i__+&$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'data_webapp.urls'
@@ -142,6 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 
 
+
 # Email host credentials to send email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -184,4 +186,9 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 AUTH_USER_MODEL = 'core.User'
 
 # redirect after successful signup
+LOGIN_REDIRECT_URL = 'dashboard'
+
 LOGOUT_REDIRECT_URL = 'dashboard'
+
+
+TWOCAPTCHA_API_KEY = "3608f5e5012070ab8e5d1209dca111d6"

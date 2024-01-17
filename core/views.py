@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 
 from .forms import SignUpForm, LoginForm
 
+from django.contrib import messages
+
 # Create your views here.
 
 
@@ -14,6 +16,9 @@ def signup_view(request):
             user = form.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('dashboard')
+        else:
+            print(form.errors)
+            messages.error(request, "Password must contain 8 characters and should not be too common.")
     else:
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})

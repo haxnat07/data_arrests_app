@@ -22,7 +22,7 @@
                           <input type="password" name="{{ form.password.name }}" placeholder="Create a password" />
                       </div>
                       <div class="signup-btn-field mobile-hide">
-                          <button type="submit" class="signup-btn">Log In</button>
+                          <button type="submit" class="signup-btn">Sign Up</button>
                           <p class="already-account-text">Already have an account? <a href="{% url 'login' %}"
                                   class="already-login">Log In</a></p>
                       </div>
@@ -43,7 +43,7 @@
                       <div class="signup-btn-field">
                           <p class="already-account-text desktop-hide">Already have an account? <a href="{% url 'login' %}"
                               class="already-login">Log In</a></p>
-                          <button type="submit" class="signup-btn desktop-hide">Log In</button>
+                          <button type="submit" class="signup-btn desktop-hide">Sign Up</button>
                         </form>
                           <button class="google-btn"><a href="{% url 'social:begin' 'google-oauth2' %}">
                             Login with Google</a></button>

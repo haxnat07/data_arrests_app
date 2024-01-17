@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+<div class="dashboard-content-search-bar">
+<form method="post" action="{% url 'search_view' %}">
+    {% csrf_token %}
+<div class="search-input">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Search Case" name="name">
+</div>
+</form>
+</div>
