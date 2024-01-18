@@ -125,3 +125,49 @@ body {
         background-position: left 20px center;
     }
 }
+
+
+/******** Password Reset **********/
+
+
+.pass-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #F5F6F8;
+}
+
+.pass-box {
+    width: 100%;
+    height: 500px;
+    max-width: 440px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #fff;
+    border-radius: 2px;
+}
+
+.pass-div {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.pass-div > h2 {
+    font-size: 40px;
+    text-align: center;
+    color: #004AD9;
+    margin: 10px 0 0 0;
+}
+
+.pass-div > p {
+    font-size: 14px;
+    color: #707683;
+    margin-bottom: 32px;
+    text-align: center;
+}
+

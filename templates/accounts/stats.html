@@ -97,9 +97,7 @@
         <div class="change-period-div">
             <p>Change Period</p>
             <select class="change-period-div-select-stats" id="selectMonth">
-                <option value="2023-11">November 2023</option>
-                <option value="2023-12">December 2023</option>
-                <option value="2024-01" selected>January 2024</option>
+                
             </select>            
         </div>
         <!-- Main Table -->
@@ -110,6 +108,23 @@
 </div>
 
 <script>
+    const startYear = 2022; // Starting year
+    const endYear = new Date().getFullYear(); // Current year
+
+    function populateMonths() {
+        const selectMonth = document.getElementById('selectMonth');
+        for (let year = startYear; year <= endYear; year++) {
+            for (let month = 1; month <= 12; month++) {
+                const monthValue = `${year}-${month.toString().padStart(2, '0')}`;
+                const option = new Option(monthValue, monthValue);
+                selectMonth.add(option);
+            }
+        }
+    }
+
+    populateMonths();
+
+
     const recordsData = JSON.parse('{{ records_json|safe }}');
 console.log('Initial recordsData:', recordsData);
 

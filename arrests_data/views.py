@@ -260,15 +260,19 @@ def search_script(request):
     solver = TwoCaptcha(settings.TWOCAPTCHA_API_KEY)
 
     # Use Firefox options and driver instead of Chrome
-    firefox_options = webdriver.FirefoxOptions()
+    #firefox_options = webdriver.FirefoxOptions()
     # firefox_options.add_argument("--incognito")
     # Set headless mode
-    firefox_options.add_argument("--headless")
+    #firefox_options.add_argument("--headless")
     #print("1")
     #firefox_options.headless = True
-    print("2")
-    driver = webdriver.Firefox(options=firefox_options)
-    print("3")
+    #driver = webdriver.Firefox(options=firefox_options)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--headless")
+
+    driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
     for record in ArrestRecord.objects.all():
         print(record.name)

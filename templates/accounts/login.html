@@ -15,7 +15,9 @@
               <div class="login-input-field">
                   <div class="login-password-label">
                       <label>Password*</label>
-                      <label></label>
+                      <label>
+                        <a href={% url 'password-reset' %}>Forgot Password?</a>
+                      </label>
                   </div>
                   <input type="password" name="{{ form.password.name }}" placeholder="Create a password" />
               </div>
