@@ -255,7 +255,7 @@ def run_script():
 
 
 # lawyers scrapper
-def search_script():
+def search_script(request):
 
     solver = TwoCaptcha(settings.TWOCAPTCHA_API_KEY)
 
@@ -264,7 +264,11 @@ def search_script():
     # firefox_options.add_argument("--incognito")
     # Set headless mode
     firefox_options.add_argument("--headless")
-    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
+    #print("1")
+    #firefox_options.headless = True
+    print("2")
+    driver = webdriver.Firefox(options=firefox_options)
+    print("3")
 
     for record in ArrestRecord.objects.all():
         print(record.name)

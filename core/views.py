@@ -18,7 +18,13 @@ def signup_view(request):
             return redirect('dashboard')
         else:
             print(form.errors)
-            messages.error(request, "Password must contain 8 characters and should not be too common.")
+            # Check for non-password errors
+            non_password_errors = any(field != 'password' for field in form.errors)
+            if non_password_errors:
+                messages.error(request, "Please complete all fields.")
+            # Check for password-related errors
+            if 'password' in form.errors:
+                messages.error(request, "Password must contain 8 characters and should not be too common.")
     else:
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})

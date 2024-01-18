@@ -42,10 +42,10 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     username = models.CharField(max_length=150, null=True, blank=True)
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=20, null=True, blank=False)
-    law_firm = models.CharField(max_length=20, null=True, blank=False)
-    preferred_arrest_location = models.CharField(max_length=20, null=True, blank=False)
-    city = models.CharField(max_length=20, null=True, blank=False)
+    name = models.CharField(max_length=20)
+    law_firm = models.CharField(max_length=20)
+    preferred_arrest_location = models.CharField(max_length=20)
+    city = models.CharField(max_length=20)
 
     objects = CustomUserManager()
 
