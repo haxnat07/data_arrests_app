@@ -66,7 +66,7 @@ def logout_view(request):
     return redirect('login')
 
 
-
+from django.conf import settings
 # Reset password with email link
 def custom_password_reset(request):
     if request.method == 'POST':
@@ -79,6 +79,7 @@ def custom_password_reset(request):
 
             # Save the form, triggering the sending of the password reset email
             form.save(
+                domain_override=settings.CUSTOM_DOMAIN,
                 request=request,
                 from_email=None,
                 email_template_name=None,
@@ -94,3 +95,16 @@ def custom_password_reset(request):
     else:
         form = CustomPasswordResetForm()
     return render(request, 'forget_password/password_reset_form.html', {'form': form})
+
+
+from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.urls import reverse_lazy
+
+
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    template_name = 'forget_password/password_reset_form.html'
+    email_template_name = 'forget_password/password_reset_email.html'
+    subject_template_name = 'forget_password/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+    extra_email_context = {'domain': settings.CUSTOM_DOMAIN, 'protocol': 'http'}

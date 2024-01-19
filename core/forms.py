@@ -41,3 +41,4 @@ class LoginForm(forms.Form):
 # Reset Password from email link
 class CustomPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(max_length=254)
+

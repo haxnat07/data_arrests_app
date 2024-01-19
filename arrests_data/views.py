@@ -268,9 +268,10 @@ def search_script(request):
     #firefox_options.headless = True
     #driver = webdriver.Firefox(options=firefox_options)
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--headless")
+    #chrome_options.add_argument("--disable-extensions")
+    #chrome_options.add_argument("--disable-gpu")
+    #chrome_options.add_argument("--headless")
+    chrome_options.headless = True
 
     driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
