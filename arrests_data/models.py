@@ -12,6 +12,7 @@ class ArrestRecord(models.Model):
     age = models.IntegerField(null=True, blank=True)
     arrest_date = models.DateField(null=True, blank=True)
     arrest_time = models.TimeField(null=True, blank=True)
+    case_number = models.CharField(max_length=200)
     state_lawyer = models.CharField(max_length=200, null=True, blank=True)
     defendant_lawyer = models.CharField(max_length=200, null=True, blank=True)
 

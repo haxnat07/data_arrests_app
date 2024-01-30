@@ -24,9 +24,9 @@ class ArrestsDataConfig(AppConfig):
         from django.conf import settings
 
         scheduler = BackgroundScheduler()
-        scheduler.add_job(run_script, 'cron', hour=23, minute=29)
+        scheduler.add_job(run_script, 'cron', hour=23, minute=41)
 
-        #scheduler.add_job(search_script, 'cron', hour=23, minute=33)
+        scheduler.add_job(search_script, 'cron', hour=16, minute=52)
 
         #scheduler.add_job(search_script, 'cron', day_of_week='mon', hour=9, minute=0)
         scheduler.start()

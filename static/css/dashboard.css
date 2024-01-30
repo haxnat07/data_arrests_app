@@ -6,15 +6,17 @@ body {
 
 .dashboard-container {
     display: flex;
-    height: 975px;
+    height: 100%;
+    background-color: #F5F6F8;
 }
 
 /* Sidebar */
 .dashboard-sidebar {
     width: 20%;
+    background-color: #fff;
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 0  rgba(0, 0, 0.2, 0.2);
     justify-content: space-between;
 }
 
@@ -234,7 +236,7 @@ th {
 }
 
 .custom-th {
-    text-align: right;
+    text-align: center;
 }
 
 .custom-td {
@@ -243,7 +245,7 @@ th {
 }
 
 .custom-td-btn {
-    text-align: right;
+    text-align: center;
     padding: 0 3px 0 0;
 }
 

@@ -255,28 +255,24 @@ def run_script():
 
 
 # lawyers scrapper
-def search_script(request):
+def search_script():
 
     solver = TwoCaptcha(settings.TWOCAPTCHA_API_KEY)
 
     # Use Firefox options and driver instead of Chrome
     #firefox_options = webdriver.FirefoxOptions()
-    # firefox_options.add_argument("--incognito")
     # Set headless mode
     #firefox_options.add_argument("--headless")
-    #print("1")
     #firefox_options.headless = True
     #driver = webdriver.Firefox(options=firefox_options)
     chrome_options = webdriver.ChromeOptions()
-    #chrome_options.add_argument("--disable-extensions")
-    #chrome_options.add_argument("--disable-gpu")
-    #chrome_options.add_argument("--headless")
     chrome_options.headless = True
 
-    driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    
 
     for record in ArrestRecord.objects.all():
         print(record.name)
+        driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         # Navigate to the website
         driver.get("https://mycourts.idaho.gov/odysseyportal/Home/Dashboard/29")
 
@@ -304,27 +300,117 @@ def search_script(request):
         
         try:
             wait = WebDriverWait(driver, 50)
-            results_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "caseLink")))
-            
-            if "CR01-24-00" in results_element.text:
-                results_element.click()
+            case_numbers_to_check = ["CR01-24-00", "CR01-24-01", "CR01-24-02", "CR01-24-03"]
 
-                state_element = wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='divPartyInformation_body']/div[1]/div[2]/div[2]/div[1]/div/div/div")))
-                defendant_element = wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id='divPartyInformation_body']/div[3]/div[2]/div[2]/div[1]/div/div/div")))
+            case_links = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "caseLink")))
 
-                state_text = state_element.text
-                defendant_text = defendant_element.text
-                #print("State:", state_text)
-                print(f"State for {record.name} is: {state_text}")
-                print(f"Defendant for {record.name} is: {defendant_text}")
-                record.state_lawyer = state_text
-                record.defendant_lawyer = defendant_text
+            # Iterate through all elements with class 'caseLink'
+            matching_case_numbers = []
+            for case_link in case_links:
+                for case_number in case_numbers_to_check:
+                    if case_number in case_link.text:
+                        matching_case_numbers.append(case_link.text)
 
-                # Save the updated record to the database
-                record.save()
+            print("matching :", matching_case_numbers)
+            # Update the ArrestRecord with all matching case numbers
+            if matching_case_numbers:
+
+                for index, case_number in enumerate(matching_case_numbers):
+                    existing_record = ArrestRecord.objects.filter(case_number=case_number).first()
+
+                    if existing_record:
+                        print(f"Record with case number {case_number} already exists, skipping.")
+                        continue
+
+                    else:
+                        case_link_element = WebDriverWait(driver, 10).until(
+                            EC.presence_of_element_located((By.XPATH, f"//a[@class='caseLink' and contains(text(), '{case_number}')]"))
+                        )
+                        print("Case number is:", case_link_element.text)
+                        if index == 0:
+                            # Click on the first case number in the current tab
+                            case_link_element.click()
+                        else:
+                            # Open new tab to search next case number
+                            driver.execute_script("window.open('', '_blank');")
+                            driver.switch_to.window(driver.window_handles[-1])
+                            # Navigate to the main page
+                            driver.get("https://mycourts.idaho.gov/odysseyportal/Home/Dashboard/29")
+
+                            search_box = driver.find_element(By.XPATH, "//*[@id='caseCriteria_SearchCriteria']")
+                            search_box.clear()
+                            search_box.send_keys(record.name)
+
+                            time.sleep(10)
+
+                            try:
+                                print("recaptcha find")
+                                result = solver.recaptcha(
+                                    sitekey='6LfqmHkUAAAAAAKhHRHuxUy6LOMRZSG2LvSwWPO9',
+                                    url='https://mycourts.idaho.gov/odysseyportal/Home/Dashboard/29')
+                                print("recaptcha find 1")
+                                driver.execute_script(f"document.getElementById('g-recaptcha-response').innerHTML = '{result['code']}';")
+                                print("recaptcha find 2")
+                            except Exception as e:
+                                print("recaptcha find not")
+                                print(e)
+
+                            submit_button = driver.find_element(By.XPATH, "//*[@id='btnSSSubmit']")
+                            submit_button.click()
+
+                            # Find the next case number link
+                            case_link_element = WebDriverWait(driver, 10).until(
+                            EC.presence_of_element_located((By.XPATH, f"//a[@class='caseLink' and contains(text(), '{case_number}')]"))
+                            )
+                            print("Case number is:", case_link_element.text)
+
+                            case_link_element.click()
+
+                        try:
+                            state_element = wait.until(
+                                EC.presence_of_element_located(
+                                    (By.XPATH, "//*[@id='divPartyInformation_body']/div[1]/div[2]/div[2]/div[1]/div/div/div")))
+                            state_text = state_element.text
+                        except Exception as e:
+                            state_text = ""
+
+                        try:
+                            defendant_element = wait.until(
+                                EC.presence_of_element_located(
+                                    (By.XPATH, "//*[@id='divPartyInformation_body']/div[3]/div[2]/div[2]/div[1]/div/div/div")))
+                            defendant_text = defendant_element.text
+                        except Exception as e:
+                            defendant_text = ""
+
+                        print(f"State for {record.name} and case {case_number} is: {state_text}")
+                        print(f"Defendant for {record.name} and case {case_number} is: {defendant_text}")
+
+                        if index == 0:
+                            record.case_number = case_number
+                            record.state_lawyer = state_text
+                            record.defendant_lawyer = defendant_text
+                            record.save()
+                        else:
+                            new_record = ArrestRecord.objects.create(
+                                        name=record.name,
+                                        address= record.address,
+                                        agency = record.agency,
+                                        severity = record.severity,
+                                        charge = record.charge,
+                                        statute = record.statute,
+                                        arrest_type = record.arrest_type,
+                                        age = record.age,
+                                        arrest_date = record.arrest_date,
+                                        arrest_time = record.arrest_time,
+                                        case_number=case_number,
+                                        state_lawyer=state_text,
+                                        defendant_lawyer=defendant_text
+                                    )
+                            new_record.save()
 
             else:
-                print("No Lawyer")
+                print(f"No matching case numbers found for {record.name}, moving to next record.")
+
         except TimeoutException:
             print(f"No results found for {record.name}, moving to next record.")
             continue

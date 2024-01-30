@@ -116,7 +116,9 @@
                     <th>Agency</th>
                     <th>Charge</th>
                     <th>Type</th>
-                    <th class="custom-th">Lawyer</th>
+                    <th>Case #</th>
+                    <th class="custom-th">Defendant Lawyer</th>
+                    <th class="custom-th">State Lawyer</th>
                 </tr>
                 {% for record in records %}
                 <tr>
@@ -127,10 +129,14 @@
                     <td class="custom-td">{{ record.agency }}</td>
                     <td class="custom-td">{{ record.charge }}</td>
                     <td class="custom-td">{{ record.arrest_type }}</td>
+                    <td class="custom-td">{{ record.case_number }}</td>
+                    {% if record.defendant_lawyer %}
+                    <td class="custom-td-btn"><button class="table-hired-btn">{{ record.defendant_lawyer }}</button></td>
+                    {% else %}
+                    <td class="custom-td-btn"><button class="table-not-hired-btn">Not Hired</button></td>
+                    {% endif %}
                     {% if record.state_lawyer %}
                     <td class="custom-td-btn"><button class="table-hired-btn">{{ record.state_lawyer}}</button></td>
-                    {% elif record.defendant_lawyer %}
-                    <td class="custom-td-btn"><button class="table-hired-btn">{{ record.defendant_lawyer }}</button></td>
                     {% else %}
                     <td class="custom-td-btn"><button class="table-not-hired-btn">Not Hired</button></td>
                     {% endif %}

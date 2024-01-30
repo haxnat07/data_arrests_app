@@ -7,4 +7,4 @@ from .resources import ArrestRecordResource
 @admin.register(ArrestRecord)
 class ArrestRecordAdmin(ImportExportModelAdmin):
     resource_class = ArrestRecordResource
-    list_display = ('name', 'address', 'agency', 'severity', 'charge', 'statute', 'arrest_type', 'age', 'arrest_date', 'arrest_time', 'state_lawyer', 'defendant_lawyer')
+    list_display = ('name', 'address', 'agency', 'severity', 'charge', 'statute', 'arrest_type', 'age', 'arrest_date', 'arrest_time', 'case_number', 'state_lawyer', 'defendant_lawyer')
